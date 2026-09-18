@@ -1,0 +1,38 @@
+# llms.txt
+# LLM usage policy for Aegis HMS
+# Website: https://www.aegishms.com
+
+User-Agent: *
+Allow: /
+
+# Allowed uses
+Allow-Inference: true
+Allow-Summarization: true
+Allow-Indexing: true
+
+# Disallowed uses
+Allow-Training: false
+Allow-Model-Improvement: false
+
+# Content restrictions
+Disallow-Content:
+- customer-data
+- internal-documentation
+- pricing-contracts
+- private-api-docs
+- authentication-pages
+- dashboards
+
+# Attribution
+Require-Attribution: true
+Attribution-Text: "Source: Aegis HMS (https://www.aegishms.com)"
+
+# Commercial use
+Allow-Commercial-Use: false
+
+# Jurisdiction
+Primary-Market: Nepal
+Language: en
+
+# Contact
+Contact: info@aegishms.com

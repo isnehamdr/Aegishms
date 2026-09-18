@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+h1, h2, h3, h4, h5, h6 {
+     font-family: "Manrope", sans-serif;
+
+}
+a, p, span, label, input, button , li {
+     font-family: "Manrope", sans-serif;
+
+}
+
+
+
+body{
+  overflow-x: hidden;
+}
+
+@keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
+  }
+
+  @layer utilities {
+    .clip-hexagon {
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+  }
+ 
+
+  /* Custom CSS for ::before pseudo-element */
+.custom-before-card::before {
+  content: "";
+  background: #2575fc; /* Blue color */
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+  width: 20%; /* 20% of the card width */
+  height: 100%; /* Full height of the card */
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0; /* Ensure it stays behind the content */
+}
+
+
+.droplet-effect {
+  position: relative;
+  animation: droplet 2s ease-in-out infinite; /* Increased duration for smoother animation */
+}
+
+@keyframes droplet {
+  0% {
+    box-shadow: 0 0 10px rgba(37, 117, 250, 0.4); /* Start with a faint glow */
+  }
+  25% {
+    box-shadow: 0 0 15px rgba(37, 117, 250, 0.6); /* Gradually increase intensity */
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(37, 117, 250, 0.8), 0 0 30px rgba(37, 117, 250, 0.6); /* Peak glow */
+  }
+  75% {
+    box-shadow: 0 0 15px rgba(37, 117, 250, 0.6); /* Gradually decrease intensity */
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(37, 117, 250, 0.4); /* Return to faint glow */
+  }
+}
+
+
+
+
+.clients-slider {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap into multiple rows */
+  gap: 1rem; /* Adjust the gap between items */
+  width: max-content; /* Ensure the slider expands beyond the viewport */
+  overflow: hidden; /* Hide overflowing content */
+}
+
+.clients-slider > div {
+  flex: 0 0 calc(8% - 1rem); /* Each item takes up 1/8th of the row width (adjust for gap) */
+}
+
+/* Base styles for the hexagon container */
+.clients-slider > div {
+  transition: transform 0.3s ease; /* Smooth transition for hover effect */
+}
+
+
+
+.clip-wave {
+    clip-path: polygon(
+      0% 0%,
+      100% 0%,
+      100% 75%,
+      75% 75%,
+      75% 100%,
+      50% 75%,
+      0% 75%
+    );
+  }
+
+  /* Ripple Animation */
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  .animate-ripple {
+    animation: ripple 1s ease-out;
+  }
+
+  .clip-wave {
+    clip-path: polygon(
+      0% 0%,
+      100% 0%,
+      100% 75%,
+      75% 75%,
+      75% 100%,
+      50% 75%,
+      0% 75%
+    );
+  }
+
+  @keyframes rotateSlow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes glow {
+    0% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0.3;
+    }
+  }
+  
+  @keyframes borderGlow {
+    0% {
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+    }
+    100% {
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+    }
+  }
+  
+  .animate-rotate-slow {
+    animation: rotateSlow 10s linear infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+  
+  .animate-border-glow {
+    animation: borderGlow 3s ease-in-out infinite;
+  }
+
+  
+
+
+
+  .partners-slider {
+    overflow: visible; /* Ensure no logos are hidden */
+  }
+
+  @media (max-width: 640px) {
+    .partners-slider > div {
+      flex-basis: 45%; /* Two logos per row */
+      max-width: 50%; /* Prevent logos from exceeding half the container width */
+    }
+  }
+
+
+  
+  .clip-path-custom {
+    clip-path: polygon(50% 0%, 100% 0, 100% 100%, 0 100%, 0 0);
+  }
+
+  .bg-brand-blue {
+    background-color: #005c94;
+  }
+
+
+  /* Modern Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar for a modern look */
+}
+
+::-webkit-scrollbar-track {
+  background: #ddf3fd; /* Light blue gradient-like track */
+  border-radius: 10px; /* Rounded corners for the track */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #0074d9, #005c94); /* Gradient thumb for a modern feel */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  border: 2px solid transparent; /* Transparent border for spacing */
+  background-clip: content-box; /* Clip the background to avoid overlap */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #005c94, #003f6b); /* Darker gradient on hover */
+}
+
+/* Optional: Add smooth scrolling for a better user experience */
+html {
+  scroll-behavior: smooth;
+}

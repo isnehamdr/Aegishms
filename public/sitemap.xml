@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+    <!-- Homepage -->
+    <url>
+        <loc>https://www.aegishms.com/</loc>
+        <priority>1.0</priority>
+        <changefreq>daily</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <!-- Main Pages -->
+    <url>
+        <loc>https://www.aegishms.com/about-us</loc>
+        <priority>0.9</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/services</loc>
+        <priority>0.9</priority>
+        <changefreq>weekly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/clients</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/teams</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/events</loc>
+        <priority>0.8</priority>
+        <changefreq>weekly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/contact</loc>
+        <priority>0.9</priority>
+        <changefreq>yearly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <!-- Blog Section -->
+    <url>
+        <loc>https://www.aegishms.com/blogs</loc>
+        <priority>0.7</priority>
+        <changefreq>weekly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <!-- Product Lines -->
+    <url>
+        <loc>https://www.aegishms.com/aegis-hms</loc>
+        <priority>0.9</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/aegis-core</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/aegis-elite</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+    <url>
+        <loc>https://www.aegishms.com/kds</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/aegis-infinity</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/aegis-restro</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/aegis-order-app</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/aegis-pulse</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <!-- Additional Products -->
+    <url>
+        <loc>https://www.aegishms.com/aegis-ops</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/e-checkin</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <!-- Module Pages - Dynamic Routes -->
+    <url>
+        <loc>https://www.aegishms.com/modules/front-office</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/housekeeping</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/point-of-sales</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/banquet</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/inventory</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/finance</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/costing</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/payroll</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/foreign-exchange-encashment</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/sales-marketing</loc>
+        <priority>0.8</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/fixed-assets-module</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/waiter-app</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/modules/aegis-pulse247</loc>
+        <priority>0.7</priority>
+        <changefreq>monthly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <!-- Careers and Legal -->
+    <url>
+        <loc>https://www.aegishms.com/careers</loc>
+        <priority>0.6</priority>
+        <changefreq>weekly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/termsandconditions</loc>
+        <priority>0.5</priority>
+        <changefreq>yearly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+    <url>
+        <loc>https://www.aegishms.com/privacy-aegis-pulse</loc>
+        <priority>0.5</priority>
+        <changefreq>yearly</changefreq>
+        <lastmod>2025-02-25</lastmod>
+    </url>
+
+</urlset>

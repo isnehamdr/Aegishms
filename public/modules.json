@@ -1,0 +1,93 @@
+[
+  {
+    "title": "Front Office Management",
+    "subtitle": "Cloud based front office platform",
+    "slug": "front-office",
+    "description": "This integrated solution provides complete hotel management capabilities including reservations and forecasts for bookings and occupancy trends, guest and hotel information management, comprehensive financial reporting with night audit and revenue analysis, manager and tourism insights for strategic analytics, detailed meal and room occupancy reports, along with receipt generation and forecasted reporting features.",
+    "image_path": "/images/Modules/m16.png"
+  },
+  {
+    "title": "Housekeeping Management",
+    "subtitle": "Smart housekeeping management",
+    "slug": "housekeeping",
+    "description": "Streamline room status updates, staff assignments, cleaning schedules, and maintenance requests in real-time. Improve guest satisfaction with timely room readiness and automated alerts.",
+    "image_path": "/images/Modules/m2.png"
+  },
+  {
+    "title": "Point Of Sales",
+    "subtitle": "Integrated POS system",
+    "slug": "point-of-sales",
+    "description": "Manage restaurant, bar, spa, and retail sales seamlessly. Track inventory, generate bills, apply discounts, and integrate directly with guest folios for hassle-free checkout.",
+    "image_path": "/images/Modules/m3.png"
+  },
+  {
+    "title": "Banquet Management",
+    "subtitle": "Seamless online booking system",
+    "slug": "banquet",
+    "description": "The Banquet Module of Aegis HMS simplifies end-to-end event management with tools for scheduling, booking, and billing. It includes detailed menu costing for precise budgeting and profitability analysis. With real-time availability, resource tracking, and customizable reports, it ensures efficient coordination, optimized revenue, and flawless execution of banquets and conferences.",
+    "image_path": "/images/Modules/m4.png"
+  },
+  {
+    "title": "Inventory Management",
+    "subtitle": "Material Management",
+    "slug": "inventory",
+    "description": "The Material Management Module of Aegis HMS efficiently manages procurement, inventory, and consumption across departments. It supports both Main Store and Sub Store operations for better control and distribution. With real-time stock tracking, automated reordering, and cost analysis, it minimizes wastage, ensures availability, and enhances operational efficiency and transparency.",
+    "image_path": "/images/Modules/m5.png"
+  },
+  {
+    "title": "Finance Management",
+    "subtitle": "Automated financial control",
+    "slug": "finance",
+    "description": "Robust finance management module providing full control over profit & loss, trial balance, and day book reports. Simplifies reconciliation processes including stock, bank, and ledger accounts to ensure financial accuracy. Supports compliance with ageing ledger management and statutory reports such as Annex 10/13. Provides clear cash flow insights by tracking outstanding creditors and debtor balances with follow-up tracking to maintain financial health.",
+    "image_path": "/images/Modules/m6.png"
+  },
+  {
+    "title": "F&B Costing",
+    "subtitle": "AI-powered pricing intelligence",
+    "slug": "costing",
+    "description": "The Food & Costing Module of Aegis HMS offers real-time costing, recipe-based costing, and consumption-based costing for complete cost control. It monitors ingredient usage, standardizes recipes, and tracks actual consumption against sales. This ensures accurate pricing, minimizes wastage, and enhances profitability while maintaining consistent food quality and operational efficiency.",
+    "image_path": "/images/Modules/m7.png"
+  },
+  {
+    "title": "Payroll",
+    "subtitle": "Personalized guest journeys",
+    "slug": "payroll",
+    "description": "The Payroll Module of Aegis HMS automates salary processing with precision and compliance. It integrates attendance, shifts, and leave management for accurate earnings and deductions. With auto-linking to the Finance Module, it ensures seamless posting of payroll expenses, real-time reporting, statutory compliance, and enhanced efficiency in overall HR and financial operations.",
+    "image_path": "/images/Modules/m8.png"
+  },
+  {
+    "title": "Foreign Exchange Encashment Receipt(FEER)",
+    "subtitle": "Smart stock & supply chain control",
+    "slug": "foreign-exchange-encashment",
+    "description": "The Foreign Exchange Encashment Receipt (FEER) feature in Aegis HMS manages foreign currency transactions efficiently, ensuring accurate conversion, compliance with regulations, automated receipt generation, and seamless integration with the hotel’s finance system.",
+    "image_path": "/images/Modules/m9.png"
+  },
+  {
+    "title": "Sales & Marketing",
+    "subtitle": "Real-time operational insights",
+    "slug": "sales-marketing",
+    "description": "The Sales & Marketing Module of Aegis HMS manages leads, campaigns, and corporate client interactions. It includes daily sales call tracking, inquiry follow-ups, and conversion monitoring. With CRM integration, real-time reporting, and revenue analysis, it boosts marketing efficiency, strengthens customer relationships, and drives informed, data-driven business growth.",
+    "image_path": "/images/Modules/m10.png"
+  },
+  {
+    "title": "Fixed Assets Module",
+    "subtitle": "Manage your hotel from anywhere",
+    "slug": "fixed-assets-module",
+    "description": "The Fixed Assets Module of Aegis HMS manages asset acquisition, depreciation, maintenance, and disposal. It ensures accurate valuation, compliance, and reporting, providing real-time tracking and optimized utilization of all organizational assets.",
+    "image_path": "/images/Modules/m11.png"
+  },
+  {
+    "title": "waiter App",
+    "subtitle": "Empower staff with a mobile waiter app",
+    "slug": "waiter-app",
+    "description": "Empower staff with a mobile waiter app to take orders, manage tables, send requests to the kitchen or bar in real time, and deliver personalized service. Syncs instantly with POS and guest profiles to enhance responsiveness, reduce errors, and create memorable dining experiences.",
+    "image_path": "/images/Modules/m18.png"
+  },
+  {
+    "title": "Aegis Pulse247",
+    "subtitle": "Connect all your tools in one place",
+    "slug": "aegis-pulse247",
+    "description": "Seamlessly integrate with payment gateways, door locks, accounting software, WhatsApp, Google Calendar, and more. Build a unified tech stack without manual data entry.",
+    "image_path": "/images/Modules/m12.png"
+  }
+]
