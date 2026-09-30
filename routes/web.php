@@ -2,9 +2,72 @@
 
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\EventController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+
+Route::get('/admin-blog', function () {
+    return Inertia::render('AdminPages/Blog');
+});
+Route::get('/admin-event', function () {
+    return Inertia::render('AdminPages/Event');
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    Route::get('/ourusers', [UserController::class, 'index'])->name('ourusers.index');
+Route::post('/ourusers', [UserController::class, 'store'])->name('ourusers.store');
+Route::get('/ourusers/{id}', [UserController::class, 'show'])->name('ourusers.show');
+Route::put('/ourusers/{id}', [UserController::class, 'update'])->name('ourusers.update');
+Route::delete('/ourusers/{id}', [UserController::class, 'destroy'])->name('ourusers.destroy');
+
+Route::get('/ourblogs', [BlogController::class, 'index'])->name('ourblogs.index');
+Route::post('/ourblogs', [BlogController::class, 'store'])->name('ourblogs.store');
+Route::get('/ourblogs/{id}', [BlogController::class, 'show'])->name('ourblogs.show');
+Route::put('/ourblogs/{id}', [BlogController::class, 'update'])->name('ourblogs.update');
+Route::delete('/ourblogs/{id}', [BlogController::class, 'destroy'])->name('ourblogs.destroy');
+
+
+Route::get('/ourevent', [EventController::class, 'index'])-> name('ourevents.index');
+Route::post('/ourevents', [EventController::class, 'store'])-> name('ourevents.store');
+Route::put('/ourevents/{id}', [EventController::class, 'update'])-> name('ourevents.update');
+Route::delete('/ourevents/{id}', [EventController::class, 'destroy'])-> name('ourevents.destroy');
+
+
+
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Helper function to get base SEO data
 if (!function_exists('getBaseSeo')) {
@@ -203,7 +266,7 @@ Route::get('/', function () {
             'og_type' => 'website',
             'schema' => $fullSchema
         ],
-
+        
     ]);
 })->name('home');
 
@@ -292,7 +355,7 @@ Route::group([], function () {
         ]);
     });
 
-    Route::get('/events', function () {
+    Route::get('/ourevents', function () {
         $siteUrl = getBaseSeo()['site_url'];
         $canonicalUrl = $siteUrl . '/events';
 
@@ -755,6 +818,10 @@ Route::group([], function () {
             ]
         ]);
     });
+
+
+
+
 });
 
 require __DIR__ . '/auth.php';
