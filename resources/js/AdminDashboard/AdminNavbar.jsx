@@ -11,8 +11,9 @@ const imgurl = import.meta.env.VITE_IMAGE_PATH;
 const AdminNavBar = ({ onMenuToggle }) => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const userMenuRef = useRef(null);
-    const { auth } = usePage().props;
-    const user = auth?.user;
+       const { props } = usePage();
+       const user = props?.auth?.user || null;
+    // const user = usePage().props.auth.user;
     const [imageError, setImageError] = useState(false);
 
     const isAbsoluteUrl = (value) => {
@@ -85,6 +86,7 @@ const AdminNavBar = ({ onMenuToggle }) => {
         setIsUserMenuOpen(false);
     }, [window.location.pathname]);
 
+console.log("User data in AdminNavBar:", user);
     return (
         <nav className="fixed top-0 right-0 w-full lg:w-[98%] h-16 border-b z-30 bg-white">
             <div className="h-full px-4 sm:px-6 lg:px-8">
@@ -102,7 +104,7 @@ const AdminNavBar = ({ onMenuToggle }) => {
                         {/* Optional: Add branding/logo here */}
                         <Link href="/" className="hidden lg:block">
                             <h1 className="text-lg font-semibold text-gray-800">
-                              Micro & Mega
+                              Aegishms
                             </h1>
                         </Link>
                     </div>

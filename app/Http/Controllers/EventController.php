@@ -24,7 +24,7 @@ class EventController extends Controller
 
     public function index()
     {
-        // Change 'Admin/Event' to the real path of your Event page component
+        // Must match the real path: resources/js/Pages/AdminPages/Event.jsx
         return Inertia::render('AdminPages/Event', [
             'events' => Event::latest()->get(),
         ]);
@@ -48,7 +48,7 @@ class EventController extends Controller
             'images'      => $imagePaths,
         ]);
 
-        return redirect()->route('ourevents.index')
+        return redirect()->route('usevents.index')
             ->with('success', 'Event created successfully');
     }
 
@@ -78,7 +78,7 @@ class EventController extends Controller
             'images'      => $keep,
         ]);
 
-        return redirect()->route('ourevents.index')
+        return redirect()->route('usevents.index')
             ->with('success', 'Event updated successfully');
     }
 
@@ -90,7 +90,7 @@ class EventController extends Controller
 
         $event->delete();
 
-        return redirect()->route('ourevents.index')
+        return redirect()->route('usevents.index')
             ->with('success', 'Event deleted successfully');
     }
 }

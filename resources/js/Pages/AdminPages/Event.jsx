@@ -1,12 +1,24 @@
 import AddEvent from "@/AddForm/AddEvent";
 import AdminWrapper from "@/AdminDashboard/AdminWrapper";
 import React, { useState, useEffect } from "react";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 
 const Event = ({ events = [] }) => {
+    const { flash } = usePage().props;
+
     const [showForm, setShowForm] = useState(false);
     const [editingEvent, setEditingEvent] = useState(null);
     const [viewingEvent, setViewingEvent] = useState(null);
+    const [message, setMessage] = useState(null);
+
+    // Show success message after create / update / delete
+    useEffect(() => {
+        if (flash?.success) {
+            setMessage(flash.success);
+            const t = setTimeout(() => setMessage(null), 3000);
+            return () => clearTimeout(t);
+        }
+    }, [flash?.success, events]);
 
     const openAdd = () => {
         setEditingEvent(null);
@@ -26,7 +38,7 @@ const Event = ({ events = [] }) => {
 
     const handleDelete = (id) => {
         if (confirm("Are you sure you want to delete this event?")) {
-            router.delete(route("ourevents.destroy", id), {
+            router.delete(route("usevents.destroy", id), {
                 preserveScroll: true,
                 onSuccess: () => setViewingEvent(null),
             });
@@ -52,6 +64,20 @@ const Event = ({ events = [] }) => {
     return (
         <AdminWrapper>
             <div className="p-6">
+                {/* Success message */}
+                {message && (
+                    <div className="mb-6 rounded-lg bg-green-50 border border-green-200 text-green-700 px-4 py-3 flex items-center justify-between">
+                        <span>{message}</span>
+                        <button
+                            type="button"
+                            onClick={() => setMessage(null)}
+                            className="text-green-700 text-lg leading-none"
+                        >
+                            ×
+                        </button>
+                    </div>
+                )}
+
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div>
@@ -124,7 +150,6 @@ const Event = ({ events = [] }) => {
 
                                             <td className="px-6 py-4">
                                                 <div className="flex justify-end gap-2">
-                                                    {/* View */}
                                                     <button
                                                         type="button"
                                                         onClick={() => setViewingEvent(event)}
@@ -132,8 +157,6 @@ const Event = ({ events = [] }) => {
                                                     >
                                                         View
                                                     </button>
-
-                                                    {/* Edit */}
                                                     <button
                                                         type="button"
                                                         onClick={() => openEdit(event)}
@@ -141,8 +164,6 @@ const Event = ({ events = [] }) => {
                                                     >
                                                         Edit
                                                     </button>
-
-                                                    {/* Delete */}
                                                     <button
                                                         type="button"
                                                         onClick={() => handleDelete(event.id)}
@@ -189,17 +210,11 @@ const Event = ({ events = [] }) => {
                         className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Header */}
                         <div className="flex items-center justify-between px-6 py-4 border-b">
                             <div>
-                                <h2 className="text-xl font-bold text-gray-800">
-                                    {viewingEvent.title}
-                                </h2>
-                                <p className="text-sm text-gray-500 mt-0.5">
-                                    {formatDate(viewingEvent.date)}
-                                </p>
+                                <h2 className="text-xl font-bold text-gray-800">{viewingEvent.title}</h2>
+                                <p className="text-sm text-gray-500 mt-0.5">{formatDate(viewingEvent.date)}</p>
                             </div>
-
                             <button
                                 type="button"
                                 onClick={() => setViewingEvent(null)}
@@ -209,11 +224,8 @@ const Event = ({ events = [] }) => {
                             </button>
                         </div>
 
-                        {/* Body */}
                         <div className="p-6 overflow-y-auto">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                                Description
-                            </h3>
+                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Description</h3>
                             <p className="text-gray-600 whitespace-pre-line">
                                 {viewingEvent.description || "No description"}
                             </p>
@@ -225,12 +237,7 @@ const Event = ({ events = [] }) => {
                             {viewingEvent.images?.length > 0 ? (
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                     {viewingEvent.images.map((path) => (
-                                        <a
-                                            key={path}
-                                            href={`/storage/${path}`}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
+                                        <a key={path} href={`/storage/${path}`} target="_blank" rel="noreferrer">
                                             <img
                                                 src={`/storage/${path}`}
                                                 alt={viewingEvent.title}
@@ -244,7 +251,6 @@ const Event = ({ events = [] }) => {
                             )}
                         </div>
 
-                        {/* Footer */}
                         <div className="flex justify-end gap-3 px-6 py-4 border-t bg-gray-50 rounded-b-xl">
                             <button
                                 type="button"

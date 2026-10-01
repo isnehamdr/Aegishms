@@ -109,6 +109,13 @@ const AddBlog = ({ editing = null, onDone = () => {} }) => {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: finish,
+            onError: () => {
+                setTimeout(() => {
+                    document
+                        .getElementById("blog-form-errors")
+                        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 50);
+            },
         };
 
         if (editing) {
@@ -121,6 +128,20 @@ const AddBlog = ({ editing = null, onDone = () => {} }) => {
 
     return (
         <form key={formKey} onSubmit={submit}>
+            {Object.keys(errors).length > 0 && (
+                <div
+                    id="blog-form-errors"
+                    className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                    <p className="font-semibold">The blog could not be saved:</p>
+                    <ul className="mt-1 list-disc pl-5">
+                        {Object.entries(errors).map(([field, msg]) => (
+                            <li key={field}>{msg}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
                     <div className={card}>

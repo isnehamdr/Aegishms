@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { router } from "@inertiajs/react";
 
 // event = null  -> Add mode
@@ -17,14 +17,25 @@ const AddEvent = ({ event = null, onClose }) => {
     const [errors, setErrors] = useState({});
     const [processing, setProcessing] = useState(false);
 
-    // free object URLs
+    // Keep latest previews in a ref so we only revoke them on unmount
+    const previewsRef = useRef([]);
     useEffect(() => {
-        return () => previews.forEach((url) => URL.revokeObjectURL(url));
+        previewsRef.current = previews;
     }, [previews]);
+    useEffect(
+        () => () => previewsRef.current.forEach((url) => URL.revokeObjectURL(url)),
+        []
+    );
+
+    // Keep the latest onClose without re-running the effect on every render
+    const onCloseRef = useRef(onClose);
+    useEffect(() => {
+        onCloseRef.current = onClose;
+    }, [onClose]);
 
     // close on Escape + lock background scroll while the modal is open
     useEffect(() => {
-        const onKey = (e) => e.key === "Escape" && onClose();
+        const onKey = (e) => e.key === "Escape" && onCloseRef.current();
         document.addEventListener("keydown", onKey);
         const prevOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
@@ -33,7 +44,7 @@ const AddEvent = ({ event = null, onClose }) => {
             document.removeEventListener("keydown", onKey);
             document.body.style.overflow = prevOverflow;
         };
-    }, [onClose]);
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,6 +53,7 @@ const AddEvent = ({ event = null, onClose }) => {
 
     const handleImages = (e) => {
         const files = Array.from(e.target.files);
+        if (files.length === 0) return;
         setNewImages((prev) => [...prev, ...files]);
         setPreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
         e.target.value = "";
@@ -51,6 +63,7 @@ const AddEvent = ({ event = null, onClose }) => {
         setExistingImages((prev) => prev.filter((p) => p !== path));
 
     const removeNew = (index) => {
+        URL.revokeObjectURL(previews[index]);
         setNewImages((prev) => prev.filter((_, i) => i !== index));
         setPreviews((prev) => prev.filter((_, i) => i !== index));
     };
@@ -79,15 +92,15 @@ const AddEvent = ({ event = null, onClose }) => {
             existingImages.forEach((path) =>
                 formData.append("existing_images[]", path)
             );
-            router.post(route("ourevents.update", event.id), formData, options);
+            router.post(route("usevents.update", event.id), formData, options);
         } else {
-            router.post(route("ourevents.store"), formData, options);
+            router.post(route("usevents.store"), formData, options);
         }
     };
 
     const handleDelete = () => {
         if (confirm("Are you sure you want to delete this event?")) {
-            router.delete(route("ourevents.destroy", event.id), {
+            router.delete(route("usevents.destroy", event.id), {
                 preserveScroll: true,
                 onSuccess: () => onClose(),
             });
@@ -104,12 +117,10 @@ const AddEvent = ({ event = null, onClose }) => {
         Object.entries(errors).find(([k]) => k.startsWith("images."))?.[1];
 
     return (
-        // Backdrop (click outside to close)
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
             onClick={onClose}
         >
-            {/* Modal panel */}
             <div
                 className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
@@ -121,12 +132,9 @@ const AddEvent = ({ event = null, onClose }) => {
                             {isEdit ? "Edit Event" : "Add Event"}
                         </h2>
                         <p className="text-sm text-gray-500 mt-0.5">
-                            {isEdit
-                                ? "Update event details and images"
-                                : "Create a new event"}
+                            {isEdit ? "Update event details and images" : "Create a new event"}
                         </p>
                     </div>
-
                     <button
                         type="button"
                         onClick={onClose}
@@ -138,7 +146,6 @@ const AddEvent = ({ event = null, onClose }) => {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="flex flex-col min-h-0">
-                    {/* Scrollable body */}
                     <div className="p-6 overflow-y-auto">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Title */}
@@ -181,7 +188,7 @@ const AddEvent = ({ event = null, onClose }) => {
                                 </label>
                                 <input
                                     type="file"
-                                    accept="image/*"
+                                    accept="image/jpeg,image/png,image/webp"
                                     multiple
                                     onChange={handleImages}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white"
@@ -214,9 +221,7 @@ const AddEvent = ({ event = null, onClose }) => {
                         {/* Current images (edit only) */}
                         {isEdit && existingImages.length > 0 && (
                             <div className="mt-6">
-                                <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                                    Current Images
-                                </h3>
+                                <h3 className="text-sm font-semibold text-gray-700 mb-3">Current Images</h3>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                     {existingImages.map((path) => (
                                         <div key={path} className="relative group">
@@ -293,11 +298,7 @@ const AddEvent = ({ event = null, onClose }) => {
                                 disabled={processing}
                                 className="px-5 py-2.5 rounded-lg bg-[#005c94] hover:bg-[#004b78] text-white font-medium disabled:opacity-50"
                             >
-                                {processing
-                                    ? "Saving..."
-                                    : isEdit
-                                    ? "Update Event"
-                                    : "Create Event"}
+                                {processing ? "Saving..." : isEdit ? "Update Event" : "Create Event"}
                             </button>
                         </div>
                     </div>

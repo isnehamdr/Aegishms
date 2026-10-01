@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 
-const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) => {
+const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse }) => {
 	const {url} = usePage();
 	const currentPath = url.split("/")[1];
 
@@ -27,6 +27,8 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 
 	// Check The Role of the User
 	const isAdmin = user ?. role === "admin";
+
+	console.log("User data in SideBar:", user);
 
 
 	return (
@@ -57,7 +59,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 					{
 					!isCollapsed && (
 						<Link href="/" className="flex items-center whitespace-nowrap">
-							<img src="/images/logo.png" alt="Microandmega" className="h-12 w-auto"/>
+							<img src="/images/logo.png" alt="Aegishms" className="h-12 w-auto"/>
 						</Link>
 					)
 				}
@@ -203,7 +205,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 
 
 
-<Link href="/careers"
+<Link href="/admin-career"
 						className={
 							`
                             flex items-center rounded-lg transition-colors duration-200 group relative
@@ -211,7 +213,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 								isCollapsed ? "p-3 justify-center" : "p-3"
 							}
                             ${
-								isActive("/careers") ? "bg-gray-200 text-gray-600" : "text-gray-600 hover:bg-gray-50"
+								isActive("/admin-career") ? "bg-gray-200 text-gray-600" : "text-gray-600 hover:bg-gray-50"
 							}
                         `
 						}
@@ -224,7 +226,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 								isCollapsed ? "w-5 h-5" : "w-5 h-5"
 							}
                             ${
-								isActive("/careers") ? "text-gray-600" : "text-gray-500 group-hover:text-gray-700"
+								isActive("/admin-career") ? "text-gray-600" : "text-gray-500 group-hover:text-gray-700"
 							}
                         `
 						}/> {
@@ -244,7 +246,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
                     
 
 					{/* Users - Using UserCircle icon */}
-					<Link href="/user"
+					<Link href="/admin-user"
 						className={
 							`
                             flex items-center rounded-lg transition-colors duration-200 group relative
@@ -252,7 +254,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 								isCollapsed ? "p-3 justify-center" : "p-3"
 							}
                             ${
-								isActive("/user") ? "bg-gray-200 text-gray-600" : "text-gray-600 hover:bg-gray-50"
+								isActive("/admin-user") ? "bg-gray-200 text-gray-600" : "text-gray-600 hover:bg-gray-50"
 							}
                         `
 						}
@@ -265,7 +267,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 								isCollapsed ? "w-5 h-5" : "w-5 h-5"
 							}
                             ${
-								isActive("/user") ? "text-gray-600" : "text-gray-500 group-hover:text-gray-700"
+								isActive("/admin-user") ? "text-gray-600" : "text-gray-500 group-hover:text-gray-700"
 							}
                         `
 						}/> {
@@ -284,7 +286,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 					} </Link>
 
 					{/* Activity Logs - Using Activity icon */}
-					<Link href="/log"
+					<Link href="/activity-log"
 						className={
 							`
                             flex items-center rounded-lg transition-colors duration-200 group relative
@@ -292,7 +294,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 								isCollapsed ? "p-3 justify-center" : "p-3"
 							}
                             ${
-								isActive("/log") ? "bg-gray-200 text-gray-600" : "text-gray-600 hover:bg-gray-50"
+								isActive("/activity-log") ? "bg-gray-200 text-gray-600" : "text-gray-600 hover:bg-gray-50"
 							}
                         `
 						}
@@ -305,7 +307,7 @@ const SideBar = ({isMobileOpen, onMobileToggle, isCollapsed, onToggleCollapse}) 
 								isCollapsed ? "w-5 h-5" : "w-5 h-5"
 							}
                             ${
-								isActive("/log") ? "text-gray-600" : "text-gray-500 group-hover:text-gray-700"
+								isActive("/activity-log") ? "text-gray-600" : "text-gray-500 group-hover:text-gray-700"
 							}
                         `
 						}/> {
