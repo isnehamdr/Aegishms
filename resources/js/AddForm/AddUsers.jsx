@@ -2,6 +2,27 @@ import axios from "axios";
 import { X, Eye, EyeOff, Camera, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
+const imgurl = import.meta.env.VITE_IMAGE_PATH || "";
+
+// Build the full image URL from the DB / API value (display only).
+// - already absolute (http/https) -> keep as is
+// - otherwise -> prefix with VITE_IMAGE_PATH (handles stray/missing slashes)
+const resolveImage = (path) => {
+    if (!path) return "";
+    if (/^https?:\/\//i.test(path)) return path;
+
+    const base = imgurl.replace(/\/+$/, "");
+    let clean = path.replace(/^\/+/, "");
+
+    // If the base already ends with /storage and the path also starts with
+    // storage/, drop the duplicate so we don't get /storage/storage/...
+    if (/\/storage$/i.test(base)) {
+        clean = clean.replace(/^storage\//i, "");
+    }
+
+    return `${base}/${clean}`;
+};
+
 const inputCls =
     "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500";
 
@@ -75,7 +96,7 @@ const AddUsers = ({
                 name: editingUser.name || "",
                 email: editingUser.email || "",
             });
-            setImagePreview(editingUser.image_url || null);
+            setImagePreview(resolveImage(editingUser.image_url) || null);
         } else {
             setFormData(emptyForm);
             setImagePreview(null);

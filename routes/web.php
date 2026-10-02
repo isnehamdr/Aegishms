@@ -19,8 +19,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    
-
     Route::get('/admin-blog', function () {
         return Inertia::render('AdminPages/Blog');
     });
@@ -78,6 +76,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
 });
+
+Route::get('/blogs', [BlogController::class, 'publicIndex'])->name('blogs.public.index');
+Route::get('/blogs/{slug}', [BlogController::class, 'publicShow'])->name('blogs.public.show');
+
+   Route::get('/events', [EventController::class, 'publicIndex'])->name('events.public.index');
+
+      Route::get('/careers', [CareerController::class, 'publicIndex'])->name('careers.public.index');
+
 
 // Helper function to get base SEO data
 if (! function_exists('getBaseSeo')) {
@@ -365,24 +371,24 @@ Route::group([], function () {
         ]);
     });
 
-    Route::get('/ourevents', function () {
-        $siteUrl = getBaseSeo()['site_url'];
-        $canonicalUrl = $siteUrl.'/events';
+    // Route::get('/events', function () {
+    //     $siteUrl = getBaseSeo()['site_url'];
+    //     $canonicalUrl = $siteUrl.'/events';
 
-        return Inertia::render('Events', [
-            'seo' => [
-                'title' => 'Events & Webinars | Aegis HMS Hospitality Events Nepal',
-                'description' => 'Stay updated with Aegis HMS events, webinars, and hospitality industry gatherings in Nepal. Join us to learn about hotel management trends.',
-                'keywords' => 'Aegis events, hotel management webinars, hospitality events Nepal, hotel software seminars',
-                'image' => $siteUrl.'/images/og-events.jpg',
-                'canonical' => $canonicalUrl,
-                'schema' => getBreadcrumbSchema([
-                    ['name' => 'Home', 'url' => $siteUrl],
-                    ['name' => 'Events', 'url' => $canonicalUrl],
-                ]),
-            ],
-        ]);
-    });
+    //     return Inertia::render('Events', [
+    //         'seo' => [
+    //             'title' => 'Events & Webinars | Aegis HMS Hospitality Events Nepal',
+    //             'description' => 'Stay updated with Aegis HMS events, webinars, and hospitality industry gatherings in Nepal. Join us to learn about hotel management trends.',
+    //             'keywords' => 'Aegis events, hotel management webinars, hospitality events Nepal, hotel software seminars',
+    //             'image' => $siteUrl.'/images/og-events.jpg',
+    //             'canonical' => $canonicalUrl,
+    //             'schema' => getBreadcrumbSchema([
+    //                 ['name' => 'Home', 'url' => $siteUrl],
+    //                 ['name' => 'Events', 'url' => $canonicalUrl],
+    //             ]),
+    //         ],
+    //     ]);
+    // });
 
     Route::get('/about-us', function () {
         $siteUrl = getBaseSeo()['site_url'];
@@ -538,64 +544,64 @@ Route::group([], function () {
         ]);
     });
 
-    Route::get('/blogs', function () {
-        $siteUrl = getBaseSeo()['site_url'];
-        $canonicalUrl = $siteUrl.'/blogs';
+    // Route::get('/blogs', function () {
+    //     $siteUrl = getBaseSeo()['site_url'];
+    //     $canonicalUrl = $siteUrl.'/blogs';
 
-        return Inertia::render('BlogSection', [
-            'seo' => [
-                'title' => 'Blog | Aegis HMS Hotel Management Insights Nepal',
-                'description' => 'Read the latest insights on hotel management, restaurant operations, hospitality technology trends, and tips from Aegis HMS experts in Nepal.',
-                'keywords' => 'hotel management blog, hospitality insights Nepal, restaurant tips, property management articles, hotel technology trends',
-                'image' => $siteUrl.'/images/og-blog.jpg',
-                'canonical' => $canonicalUrl,
-                'og_type' => 'website',
-                'schema' => [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'Blog',
-                    '@id' => $canonicalUrl.'#blog',
-                    'url' => $canonicalUrl,
-                    'name' => 'Aegis HMS Blog',
-                    'description' => 'Hotel management insights and hospitality technology tips',
-                    'publisher' => ['@id' => $siteUrl.'#organization'],
-                ],
-            ],
-        ]);
-    });
+    //     return Inertia::render('BlogSection', [
+    //         'seo' => [
+    //             'title' => 'Blog | Aegis HMS Hotel Management Insights Nepal',
+    //             'description' => 'Read the latest insights on hotel management, restaurant operations, hospitality technology trends, and tips from Aegis HMS experts in Nepal.',
+    //             'keywords' => 'hotel management blog, hospitality insights Nepal, restaurant tips, property management articles, hotel technology trends',
+    //             'image' => $siteUrl.'/images/og-blog.jpg',
+    //             'canonical' => $canonicalUrl,
+    //             'og_type' => 'website',
+    //             'schema' => [
+    //                 '@context' => 'https://schema.org',
+    //                 '@type' => 'Blog',
+    //                 '@id' => $canonicalUrl.'#blog',
+    //                 'url' => $canonicalUrl,
+    //                 'name' => 'Aegis HMS Blog',
+    //                 'description' => 'Hotel management insights and hospitality technology tips',
+    //                 'publisher' => ['@id' => $siteUrl.'#organization'],
+    //             ],
+    //         ],
+    //     ]);
+    // });
 
-    Route::get('/blogs/{slug}', function ($slug) {
-        $siteUrl = getBaseSeo()['site_url'];
-        $canonicalUrl = $siteUrl.'/blogs/'.$slug;
+    // Route::get('/blogs/{slug}', function ($slug) {
+    //     $siteUrl = getBaseSeo()['site_url'];
+    //     $canonicalUrl = $siteUrl.'/blogs/'.$slug;
 
-        // This would typically come from a database
-        $blogTitles = [
-            'hotel-management-tips' => 'Essential Hotel Management Tips for 2024',
-            'restaurant-pos-benefits' => 'Benefits of Modern Restaurant POS Systems',
-            'cloud-pms-advantages' => 'Why Cloud PMS is Better for Your Hotel',
-            'aegishms-kitchen-display-system-helps-restaurants-run-smarter' => 'How AegisHMS Kitchen Display System (KDS) Helps Restaurants Run Smarter',
-            'aegishms-loyalty-membership-module-builds-lasting-guest-relationships' => 'How AegisHMS Loyalty & Membership Module Helps Build Lasting Guest Relationships',
-        ];
+    //     // This would typically come from a database
+    //     $blogTitles = [
+    //         'hotel-management-tips' => 'Essential Hotel Management Tips for 2024',
+    //         'restaurant-pos-benefits' => 'Benefits of Modern Restaurant POS Systems',
+    //         'cloud-pms-advantages' => 'Why Cloud PMS is Better for Your Hotel',
+    //         'aegishms-kitchen-display-system-helps-restaurants-run-smarter' => 'How AegisHMS Kitchen Display System (KDS) Helps Restaurants Run Smarter',
+    //         'aegishms-loyalty-membership-module-builds-lasting-guest-relationships' => 'How AegisHMS Loyalty & Membership Module Helps Build Lasting Guest Relationships',
+    //     ];
 
-        $blogTitle = $blogTitles[$slug] ?? ucfirst(str_replace('-', ' ', $slug));
+    //     $blogTitle = $blogTitles[$slug] ?? ucfirst(str_replace('-', ' ', $slug));
 
-        return Inertia::render('BlogDetail', [
-            'seo' => [
-                'title' => $blogTitle.' | Aegis HMS Blog Nepal',
-                'description' => 'Read "'.$blogTitle.'" - expert insights on hotel management and hospitality technology from Aegis HMS, Nepal\'s leading hotel software provider.',
-                'keywords' => $slug.', hotel management article, hospitality blog Nepal, hotel software tips',
-                'image' => $siteUrl.'/images/og-blog-post.jpg',
-                'canonical' => $canonicalUrl,
-                'og_type' => 'article',
-                'published_time' => date('Y-m-d', strtotime('-1 month')),
-                'modified_time' => date('Y-m-d'),
-                'schema' => getBreadcrumbSchema([
-                    ['name' => 'Home', 'url' => $siteUrl],
-                    ['name' => 'Blog', 'url' => $siteUrl.'/blogs'],
-                    ['name' => $blogTitle, 'url' => $canonicalUrl],
-                ]),
-            ],
-        ]);
-    });
+    //     return Inertia::render('BlogDetail', [
+    //         'seo' => [
+    //             'title' => $blogTitle.' | Aegis HMS Blog Nepal',
+    //             'description' => 'Read "'.$blogTitle.'" - expert insights on hotel management and hospitality technology from Aegis HMS, Nepal\'s leading hotel software provider.',
+    //             'keywords' => $slug.', hotel management article, hospitality blog Nepal, hotel software tips',
+    //             'image' => $siteUrl.'/images/og-blog-post.jpg',
+    //             'canonical' => $canonicalUrl,
+    //             'og_type' => 'article',
+    //             'published_time' => date('Y-m-d', strtotime('-1 month')),
+    //             'modified_time' => date('Y-m-d'),
+    //             'schema' => getBreadcrumbSchema([
+    //                 ['name' => 'Home', 'url' => $siteUrl],
+    //                 ['name' => 'Blog', 'url' => $siteUrl.'/blogs'],
+    //                 ['name' => $blogTitle, 'url' => $canonicalUrl],
+    //             ]),
+    //         ],
+    //     ]);
+    // });
 
     Route::get('/contact', function () {
         $siteUrl = getBaseSeo()['site_url'];
@@ -749,24 +755,24 @@ Route::group([], function () {
         ]);
     });
 
-    Route::get('/careers', function () {
-        $siteUrl = getBaseSeo()['site_url'];
-        $canonicalUrl = $siteUrl.'/careers';
+    // Route::get('/careers', function () {
+    //     $siteUrl = getBaseSeo()['site_url'];
+    //     $canonicalUrl = $siteUrl.'/careers';
 
-        return Inertia::render('Career', [
-            'seo' => [
-                'title' => 'Careers | Join Aegis Software Team Nepal',
-                'description' => 'Join Aegis Software team in Nepal. We\'re hiring developers, designers, sales professionals, and hospitality experts. Build your career with us.',
-                'keywords' => 'Aegis careers, software jobs Nepal, hospitality tech careers, developer jobs Kathmandu, IT jobs Nepal',
-                'image' => $siteUrl.'/images/og-careers.jpg',
-                'canonical' => $canonicalUrl,
-                'schema' => getBreadcrumbSchema([
-                    ['name' => 'Home', 'url' => $siteUrl],
-                    ['name' => 'Careers', 'url' => $canonicalUrl],
-                ]),
-            ],
-        ]);
-    });
+    //     return Inertia::render('Career', [
+    //         'seo' => [
+    //             'title' => 'Careers | Join Aegis Software Team Nepal',
+    //             'description' => 'Join Aegis Software team in Nepal. We\'re hiring developers, designers, sales professionals, and hospitality experts. Build your career with us.',
+    //             'keywords' => 'Aegis careers, software jobs Nepal, hospitality tech careers, developer jobs Kathmandu, IT jobs Nepal',
+    //             'image' => $siteUrl.'/images/og-careers.jpg',
+    //             'canonical' => $canonicalUrl,
+    //             'schema' => getBreadcrumbSchema([
+    //                 ['name' => 'Home', 'url' => $siteUrl],
+    //                 ['name' => 'Careers', 'url' => $canonicalUrl],
+    //             ]),
+    //         ],
+    //     ]);
+    // });
 
     Route::get('/isms-policy', function () {
         $siteUrl = getBaseSeo()['site_url'];

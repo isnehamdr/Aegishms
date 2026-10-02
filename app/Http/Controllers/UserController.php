@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Log;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -60,7 +60,7 @@ class UserController extends Controller
         ]);
 
         // Log user creation
-        Log::create([
+        ActivityLog::create([
             'name'       => Auth::check() ? Auth::user()->name : 'Guest',
             'ip_address' => $request->ip(),
             'title'      => 'User Created: ' . $user->name,
@@ -114,7 +114,7 @@ class UserController extends Controller
         $user->update($validated);
 
         // Log user update
-        Log::create([
+        ActivityLog::create([
             'name'       => Auth::check() ? Auth::user()->name : 'Guest',
             'ip_address' => $request->ip(),
             'title'      => 'User Updated: ' . $user->name,
@@ -155,7 +155,7 @@ class UserController extends Controller
         $user->delete();
 
         // Log user deletion
-        Log::create([
+        ActivityLog::create([
             'name'       => Auth::check() ? Auth::user()->name : 'Guest',
             'ip_address' => $request->ip(),
             'title'      => 'User Deleted: ' . $userName,

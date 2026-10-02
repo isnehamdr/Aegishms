@@ -4,19 +4,104 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class BlogController extends Controller
 {
-    // Inertia page (relative to resources/js/Pages, no extension).
-    // Must match the real folder/file casing, e.g. Pages/AdminPages/Blog.jsx
+    // ADMIN Inertia page (relative to resources/js/Pages, no extension)
     private const PAGE = 'AdminPages/Blog';
 
-    // GET /ourblogs
-    // - Inertia/browser request      -> admin page
-    // - JSON request (your website)  -> published blogs as JSON
+    // PUBLIC website pages - must match your real file names in resources/js/Pages
+    private const PUBLIC_LIST_PAGE   = 'BlogSection';
+    private const PUBLIC_DETAIL_PAGE = 'BlogDetail';
+
+    private const DEFAULT_CATEGORIES = [
+        'Information Security',
+        'Hotel Management',
+        'Sustainability',
+        'Technology',
+        'Guest Experience',
+    ];
+
+    /* ------------------------------------------------------------------ */
+    /*  PUBLIC WEBSITE                                                     */
+    /* ------------------------------------------------------------------ */
+
+    // GET /blogs  -> only published blogs
+    public function publicIndex()
+    {
+        $posts = Blog::where('status', true)
+            ->latest('date')
+            ->latest('id')
+            ->get()
+            ->map(fn (Blog $b) => $this->present($b))
+            ->values();
+
+        return Inertia::render(self::PUBLIC_LIST_PAGE, [
+            'posts' => $posts,
+        ]);
+    }
+
+    // GET /blogs/{slug} -> one published blog (404 if missing / draft)
+    public function publicShow(string $slug)
+    {
+        $blog = Blog::where('status', true)->where('slug', $slug)->firstOrFail();
+
+        $related = Blog::where('status', true)
+            ->where('id', '!=', $blog->id)
+            ->latest('date')
+            ->latest('id')
+            ->take(5)
+            ->get()
+            ->map(fn (Blog $b) => $this->present($b))
+            ->values();
+
+        return Inertia::render(self::PUBLIC_DETAIL_PAGE, [
+            'post'         => $this->present($blog),
+            'relatedPosts' => $related,
+        ]);
+    }
+
+    // Same shape for list + detail, so the React pages stay simple.
+    private function present(Blog $blog): array
+    {
+        $tags = $blog->tags;
+        if (is_string($tags)) {
+            $tags = json_decode($tags, true) ?: [];
+        }
+
+        $date  = $blog->date ? Carbon::parse($blog->date) : null;
+        $image = $blog->image;
+
+        if ($image && ! Str::startsWith($image, ['http://', 'https://', '/'])) {
+            $image = '/storage/' . $image; // needs `php artisan storage:link`
+        }
+
+        return [
+            'id'           => $blog->id,
+            'title'        => $blog->title,
+            'slug'         => $blog->slug,
+            'excerpt'      => $blog->excerpt,
+            'content'      => $blog->content,
+            'category'     => $blog->category,
+            'author'       => $blog->author ?: 'Aegis Team',
+            'author_url'   => $blog->author_url,
+            'read_time'    => $blog->read_time,
+            'tags'         => array_values(is_array($tags) ? $tags : []),
+            'date'         => $date?->format('Y-m-d'),
+            'display_date' => $date?->format('F j, Y'),
+            'image'        => $image,
+        ];
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  ADMIN                                                              */
+    /* ------------------------------------------------------------------ */
+
+    // GET /admin-blog
     public function index(Request $request)
     {
         if ($request->wantsJson() && ! $request->header('X-Inertia')) {
@@ -26,7 +111,8 @@ class BlogController extends Controller
         }
 
         return Inertia::render(self::PAGE, [
-            'blogs' => Blog::latest('date')->latest('id')->get(),
+            'blogs'      => Blog::latest('date')->latest('id')->get(),
+            'categories' => $this->categories(),
         ]);
     }
 
@@ -35,9 +121,10 @@ class BlogController extends Controller
     {
         $validated = $this->validated($request);
 
-        $validated['slug']   = $this->uniqueSlug($validated['slug'] ?? null, $validated['title']);
-        $validated['status'] = $request->boolean('status', true);
-        $validated['tags']   = $validated['tags'] ?? [];
+        $validated['category'] = $this->normalizeCategory($validated['category'] ?? null);
+        $validated['slug']     = $this->uniqueSlug($validated['slug'] ?? null, $validated['title']);
+        $validated['status']   = $request->boolean('status', true);
+        $validated['tags']     = $validated['tags'] ?? [];
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('blogs', 'public');
@@ -61,11 +148,10 @@ class BlogController extends Controller
 
         $validated = $this->validated($request);
 
-        $validated['slug']   = $this->uniqueSlug($validated['slug'] ?? null, $validated['title'], $blog->id);
-        $validated['status'] = $request->boolean('status');
-        // An empty tags array isn't sent in multipart data, so default it
-        // here, otherwise removing all tags would never save.
-        $validated['tags']   = $validated['tags'] ?? [];
+        $validated['category'] = $this->normalizeCategory($validated['category'] ?? null);
+        $validated['slug']     = $this->uniqueSlug($validated['slug'] ?? null, $validated['title'], $blog->id);
+        $validated['status']   = $request->boolean('status');
+        $validated['tags']     = $validated['tags'] ?? [];
 
         if ($request->hasFile('image')) {
             if ($blog->image) {
@@ -81,21 +167,19 @@ class BlogController extends Controller
         return back()->with('success', 'Blog updated successfully.');
     }
 
+    // DELETE /ourblogs/{id}
+    public function destroy($id)
+    {
+        $blog = Blog::withTrashed()->findOrFail($id);
 
-   // DELETE /ourblogs/{id}
-public function destroy($id)
-{
-    $blog = Blog::withTrashed()->findOrFail($id);
+        if ($blog->image) {
+            Storage::disk('public')->delete($blog->image);
+        }
 
-    // remove the image file from disk too
-    if ($blog->image) {
-        Storage::disk('public')->delete($blog->image);
+        $blog->forceDelete();
+
+        return back()->with('success', 'Blog deleted successfully.');
     }
-
-    $blog->forceDelete(); // permanently removes the row from the database
-
-    return back()->with('success', 'Blog deleted successfully.');
-}
 
     private function validated(Request $request): array
     {
@@ -115,7 +199,45 @@ public function destroy($id)
         ]);
     }
 
-    // Unique even against soft-deleted rows (the DB unique index includes them)
+    private function categories(): array
+    {
+        $used = Blog::query()
+            ->whereNotNull('category')
+            ->where('category', '!=', '')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category')
+            ->all();
+
+        $result = [];
+        foreach (array_merge(self::DEFAULT_CATEGORIES, $used) as $c) {
+            $c = trim($c);
+            if ($c === '') {
+                continue;
+            }
+            $result[mb_strtolower($c)] ??= $c;
+        }
+
+        return array_values($result);
+    }
+
+    private function normalizeCategory(?string $category): ?string
+    {
+        $category = trim((string) $category);
+
+        if ($category === '') {
+            return null;
+        }
+
+        foreach ($this->categories() as $existing) {
+            if (mb_strtolower($existing) === mb_strtolower($category)) {
+                return $existing;
+            }
+        }
+
+        return $category;
+    }
+
     private function uniqueSlug(?string $slug, string $title, ?int $ignoreId = null): string
     {
         $base = Str::slug($slug ?: $title) ?: Str::random(8);

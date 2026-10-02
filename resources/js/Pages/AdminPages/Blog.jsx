@@ -3,14 +3,10 @@ import { router, usePage } from "@inertiajs/react";
 import AddBlog from "@/AddForm/AddBlog";
 import AdminWrapper from "@/AdminDashboard/AdminWrapper";
 
+const imgurl = import.meta.env.VITE_IMAGE_PATH; 
 
-const CATEGORIES = [
-    "Information Security",
-    "Hotel Management",
-    "Sustainability",
-    "Technology",
-    "Guest Experience",
-];
+const isHtml = (s) => /<\/?[a-z][\s\S]*>/i.test(s || "");
+
 
 const th =
     "px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500";
@@ -44,7 +40,8 @@ const StatusBadge = ({ status }) =>
         </span>
     );
 
-const Blog = ({ blogs }) => {
+// `categories` comes from BlogController@index (defaults + categories already used)
+const Blog = ({ blogs, categories = [] }) => {
     const { flash } = usePage().props;
 
     // If this page was opened from some other URL/route that doesn't pass
@@ -96,6 +93,9 @@ const Blog = ({ blogs }) => {
             onSuccess: () => {
                 if (editing?.id === blog.id) closeForm();
                 if (viewing?.id === blog.id) setViewing(null);
+                // If the deleted blog was the last one in the selected
+                // category, that category disappears - reset the filter.
+                setCategory("");
             },
         });
     };
@@ -148,7 +148,7 @@ const Blog = ({ blogs }) => {
                             className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-black"
                         >
                             <option value="">All Categories</option>
-                            {CATEGORIES.map((c) => (
+                            {categories.map((c) => (
                                 <option key={c} value={c}>
                                     {c}
                                 </option>
@@ -176,13 +176,13 @@ const Blog = ({ blogs }) => {
                                     <tr key={blog.id} className="transition hover:bg-gray-50">
                                         <td className="max-w-md px-5 py-4">
                                             <div className="flex items-center gap-3">
-                                                {blog.image_url && (
-                                                    <img
-                                                        src={blog.image_url}
-                                                        alt=""
-                                                        className="h-10 w-14 rounded object-cover"
-                                                    />
-                                                )}
+                                               {blog.image && (
+    <img
+        src={`${imgurl}/${blog.image}`}
+        alt=""
+        className="h-10 w-14 rounded object-cover"
+    />
+)}
                                                 <p className="font-medium text-gray-900">
                                                     {blog.title}
                                                 </p>
@@ -252,7 +252,11 @@ const Blog = ({ blogs }) => {
                     title={editing ? `Edit "${editing.title}"` : "Add Blog"}
                     onClose={closeForm}
                 >
-                    <AddBlog editing={editing} onDone={closeForm} />
+                    <AddBlog
+                        editing={editing}
+                        categories={categories}
+                        onDone={closeForm}
+                    />
                 </Modal>
             )}
 
@@ -264,13 +268,13 @@ const Blog = ({ blogs }) => {
                     size="max-w-3xl"
                 >
                     <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-                        {viewing.image_url && (
-                            <img
-                                src={viewing.image_url}
-                                alt=""
-                                className="h-64 w-full rounded-lg object-cover"
-                            />
-                        )}
+                        {viewing.image && (
+    <img
+        src={`${imgurl}/${viewing.image}`}
+        alt=""
+        className="h-64 w-full rounded-lg object-cover"
+    />
+)}
 
                         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
                             <StatusBadge status={viewing.status} />
@@ -288,9 +292,13 @@ const Blog = ({ blogs }) => {
                             <p className="text-sm italic text-gray-500">{viewing.excerpt}</p>
                         )}
 
-                        <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800">
-                            {viewing.content}
-                        </div>
+                       <div
+    className={`rte-content text-sm leading-relaxed text-gray-800 ${
+        isHtml(viewing.content) ? "" : "whitespace-pre-wrap"
+    }`}
+>
+    {parse(viewing.content ?? "")}
+</div>
 
                         {viewing.tags?.length > 0 && (
                             <div className="flex flex-wrap gap-2">
