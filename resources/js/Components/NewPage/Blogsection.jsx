@@ -230,13 +230,24 @@
 
 
 
-
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
+
+const imgurl = import.meta.env.VITE_IMAGE_PATH || '';
+
+// Builds the full image URL from what the backend returns
+const getImageUrl = (image) => {
+  if (!image) return '';
+  if (/^https?:\/\//i.test(image)) return image; // already a full URL
+  if (image.startsWith('/') && !image.startsWith('/storage/')) return image; // local public asset
+
+  const path = image.replace(/^\/?storage\//, '').replace(/^\/+/, ''); // -> blogs/xyz.jpg
+  return `${imgurl.replace(/\/+$/, '')}/${path}`;
+};
 
 const Blogsection = () => {
   const [posts, setPosts] = useState([]);
@@ -246,7 +257,7 @@ const Blogsection = () => {
     Autoplay({
       delay: 3000,
       stopOnInteraction: false, // keep auto-scrolling after the user swipes
-      stopOnMouseEnter: true,   // pause while hovering
+      stopOnMouseEnter: true, // pause while hovering
     })
   );
 
@@ -384,7 +395,7 @@ const Blogsection = () => {
                     >
                       <div className="relative overflow-hidden aspect-[12/9]">
                         <img
-                          src={post.image}
+                          src={getImageUrl(post.image)}
                           alt={post.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
