@@ -77,6 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
 });
 
+Route::get('/latest-blogs', [BlogController::class, 'latest'])->name('blogs.latest');
+
 Route::get('/blogs', [BlogController::class, 'publicIndex'])->name('blogs.public.index');
 Route::get('/blogs/{slug}', [BlogController::class, 'publicShow'])->name('blogs.public.show');
 

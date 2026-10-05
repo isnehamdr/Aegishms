@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import AddBlog from "@/AddForm/AddBlog";
 import AdminWrapper from "@/AdminDashboard/AdminWrapper";
+import parse from "html-react-parser";
 
 const imgurl = import.meta.env.VITE_IMAGE_PATH; 
 

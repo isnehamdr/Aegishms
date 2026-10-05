@@ -45,6 +45,18 @@ class BlogController extends Controller
         ]);
     }
 
+    public function latest()
+{
+    $posts = Blog::where('status', true)
+        ->latest('date')
+        ->latest('id')
+        ->take(5)
+        ->get()
+        ->map(fn (Blog $b) => $this->present($b))
+        ->values();
+
+    return response()->json($posts);
+}
     // GET /blogs/{slug} -> one published blog (404 if missing / draft)
     public function publicShow(string $slug)
     {
