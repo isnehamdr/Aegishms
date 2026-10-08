@@ -270,18 +270,33 @@ const imgurl = import.meta.env.VITE_IMAGE_PATH || "";
 // Build the full image URL from the DB value.
 // - already absolute (http/https) -> keep as is
 // - otherwise -> prefix with VITE_IMAGE_PATH (handles stray/missing slashes)
+// const resolveImage = (path) => {
+//   if (!path) return FALLBACK_IMAGE;
+//   if (/^https?:\/\//i.test(path)) return path;
+
+//   const base = imgurl.replace(/\/+$/, "");
+//   let clean = path.replace(/^\/+/, "");
+
+//   // If the base already ends with /storage and the DB path also starts with
+//   // storage/, drop the duplicate so we get /storage/events/... (not /storage/storage/...)
+//   if (/\/storage$/i.test(base)) {
+//     clean = clean.replace(/^storage\//i, "");
+//   }
+
+//   return `${base}/${clean}`;
+// };
+
+
 const resolveImage = (path) => {
   if (!path) return FALLBACK_IMAGE;
   if (/^https?:\/\//i.test(path)) return path;
 
   const base = imgurl.replace(/\/+$/, "");
-  let clean = path.replace(/^\/+/, "");
 
-  // If the base already ends with /storage and the DB path also starts with
-  // storage/, drop the duplicate so we get /storage/events/... (not /storage/storage/...)
-  if (/\/storage$/i.test(base)) {
-    clean = clean.replace(/^storage\//i, "");
-  }
+  // Strip any storage prefix the DB path may already contain
+  const clean = path
+    .replace(/^\/+/, "")
+    .replace(/^(storage\/app\/public|app\/public|storage|public)\//i, "");
 
   return `${base}/${clean}`;
 };

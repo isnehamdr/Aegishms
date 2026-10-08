@@ -270,11 +270,13 @@
 // export default BlogSection;
 
 
+
 import { Link } from '@inertiajs/react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import React, { useEffect, useMemo } from 'react';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
+import parse, { domToReact, Element } from 'html-react-parser';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '@/Components/SEO';
@@ -286,21 +288,16 @@ const FALLBACK_IMAGE = '/images/Modules/hms.jpg';
 
 const imgurl = import.meta.env.VITE_IMAGE_PATH || '';
 
-// Build the full image URL from the DB value.
-// - already absolute (http/https) -> keep as is
-// - otherwise -> prefix with VITE_IMAGE_PATH (handles stray/missing slashes)
 const resolveImage = (path) => {
   if (!path) return FALLBACK_IMAGE;
   if (/^https?:\/\//i.test(path)) return path;
 
   const base = imgurl.replace(/\/+$/, '');
-  let clean = path.replace(/^\/+/, '');
 
-  // If the base already ends with /storage and the DB path also starts with
-  // storage/, drop the duplicate so we get /storage/blogs/... (not /storage/storage/...)
-  if (/\/storage$/i.test(base)) {
-    clean = clean.replace(/^storage\//i, '');
-  }
+  // Strip any storage prefix the DB path may already contain
+  const clean = path
+    .replace(/^\/+/, '')
+    .replace(/^(storage\/app\/public|app\/public|storage|public)\//i, '');
 
   return `${base}/${clean}`;
 };
@@ -309,9 +306,63 @@ const resolveImage = (path) => {
 const toAbsolute = (url) =>
   /^https?:\/\//i.test(url) ? url : `${SITE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 
-// remove **bold** and list dashes so excerpts / SEO text read cleanly
-const plain = (text = '') =>
+// ---------- Content helpers ----------
+
+// True when the text contains HTML tags (rich-text editor output)
+const isHtml = (text = '') => /<\/?[a-z][\s\S]*>/i.test(text);
+
+// remove **bold** and list dashes from old plain-text posts
+const stripMarkdown = (text = '') =>
   text.replace(/\*\*/g, '').replace(/^\s*-\s+/gm, '').replace(/\s+/g, ' ').trim();
+
+// remove HTML tags and decode common entities
+const stripHtml = (html = '') =>
+  html
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+// plain text for excerpts, meta tags and schema (works for HTML and old posts)
+const plain = (text = '') => (isHtml(text) ? stripHtml(text) : stripMarkdown(text));
+
+// ---------- Excerpt renderer (html-react-parser) ----------
+// Flattens block tags into inline spans so the excerpt stays a clean 2-line preview.
+// Bold / italic are kept; images, scripts and iframes are dropped.
+
+const DROP_TAGS = new Set(['script', 'style', 'iframe', 'img', 'figure', 'video', 'audio']);
+const FLATTEN_TAGS = new Set([
+  'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'ul', 'ol', 'li', 'blockquote', 'pre', 'table',
+  'thead', 'tbody', 'tr', 'td', 'th', 'a', 'section', 'article',
+]);
+
+const excerptOptions = {
+  replace: (node) => {
+    if (!(node instanceof Element)) return;
+
+    const { name, children } = node;
+
+    if (DROP_TAGS.has(name)) return <></>;
+    if (name === 'br') return <> </>;
+
+    if (FLATTEN_TAGS.has(name)) {
+      return (
+        <>
+          {domToReact(children, excerptOptions)}{' '}
+        </>
+      );
+    }
+
+    return; // strong, em, b, i, span... render as normal
+  },
+};
 
 // `posts` is sent by BlogController@publicIndex (published blogs from the DB)
 const BlogSection = ({ posts: serverPosts = [] }) => {
@@ -324,6 +375,10 @@ const BlogSection = ({ posts: serverPosts = [] }) => {
     () =>
       serverPosts.map((p) => {
         const image = resolveImage(p.image);
+
+        // Display excerpt: the saved excerpt, otherwise a plain-text preview of the content
+        const excerpt = p.excerpt || plain(p.content).slice(0, 160);
+
         return {
           id: p.id,
           title: p.title,
@@ -333,7 +388,9 @@ const BlogSection = ({ posts: serverPosts = [] }) => {
           readTime: p.read_time,
           category: p.category,
           content: p.content || '',
-          excerpt: p.excerpt || plain(p.content).slice(0, 160),
+          excerpt,
+          excerptIsHtml: isHtml(excerpt),
+          excerptText: plain(excerpt).slice(0, 160), // for meta tags and schema
           image,
           url: `${SITE_URL}/blogs/${p.slug}`,
           imageAbsoluteUrl: toAbsolute(image),
@@ -416,7 +473,7 @@ const BlogSection = ({ posts: serverPosts = [] }) => {
     blogPost: posts.map((post) => ({
       '@type': 'BlogPosting',
       headline: post.title,
-      description: post.excerpt,
+      description: post.excerptText,
       url: post.url,
       datePublished: post.date,
       dateModified: post.date,
@@ -507,7 +564,7 @@ const BlogSection = ({ posts: serverPosts = [] }) => {
                 <meta itemProp="datePublished" content={post.date} />
                 <meta itemProp="dateModified" content={post.date} />
                 <meta itemProp="headline" content={post.title} />
-                <meta itemProp="description" content={post.excerpt} />
+                <meta itemProp="description" content={post.excerptText} />
                 <link itemProp="url" href={post.url} />
 
                 <img
@@ -536,7 +593,10 @@ const BlogSection = ({ posts: serverPosts = [] }) => {
                     {post.title}
                   </h2>
 
-                  <p className="text-gray-600 mb-4 line-clamp-2">{post.excerpt}</p>
+                  {/* div (not p): the parsed excerpt may contain inline elements */}
+                  <div className="text-gray-600 mb-4 line-clamp-2">
+                    {post.excerptIsHtml ? parse(post.excerpt, excerptOptions) : post.excerpt}
+                  </div>
 
                   <Link
                     href={`/blogs/${post.slug}`}

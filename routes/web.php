@@ -836,6 +836,26 @@ Route::group([], function () {
         ]);
     });
 
+    Route::get('/privacy-policy', function () {
+    $siteUrl = getBaseSeo()['site_url'];
+    $canonicalUrl = $siteUrl.'/privacy-policy';
+
+    return Inertia::render('PrivacyPolicy', [
+        'seo' => [
+            'title' => 'Privacy Policy | Aegis HMS Data Privacy',
+            'description' => 'Read how Aegis Software Pvt. Ltd. collects, uses, shares, and protects data across its hospitality management software, ERP, POS, and mobile apps.',
+            'keywords' => 'privacy policy, data protection Nepal, Aegis HMS privacy, hotel software privacy, ISO 27001',
+            'image' => $siteUrl.'/images/og-privacy.jpg',
+            'canonical' => $canonicalUrl,
+            'noIndex' => false,
+            'schema' => getBreadcrumbSchema([
+                ['name' => 'Home', 'url' => $siteUrl],
+                ['name' => 'Privacy Policy', 'url' => $canonicalUrl],
+            ]),
+        ],
+    ]);
+});
+
 });
 
 require __DIR__.'/auth.php';

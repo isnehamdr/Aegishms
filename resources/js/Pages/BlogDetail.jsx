@@ -277,9 +277,9 @@
 // export default BlogDetail;
 
 
-
 import React, { useEffect, useRef } from 'react';
 import { Link } from '@inertiajs/react';
+import parse, { domToReact, Element } from 'html-react-parser';
 import { Calendar, Clock, User, ChevronRight, ArrowLeft } from 'lucide-react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import SEO from '@/Components/SEO';
@@ -292,7 +292,6 @@ const imgurl = (import.meta.env.VITE_IMAGE_PATH || '').replace(/\/+$/, ''); // n
 const pickImage = (obj = {}) =>
   obj.image ?? obj.image_url ?? obj.featured_image ?? obj.thumbnail ?? obj.cover_image ?? null;
 
-// Turn whatever is stored in the DB into a usable <img src>
 const resolveImage = (path) => {
   if (!path) return FALLBACK_IMAGE;
   path = String(path).trim().replace(/\\/g, '/');
@@ -300,14 +299,15 @@ const resolveImage = (path) => {
   // Full URL, protocol-relative URL, or data URI: use as is
   if (/^(https?:)?\/\//i.test(path) || path.startsWith('data:')) return path;
 
-  const clean = path.replace(/^\/+/, '');
-  if (!imgurl) return `/${clean}`;
+  // Strip leading slashes and any storage prefix the DB path may already contain
+  const clean = path
+    .replace(/^\/+/, '')
+    .replace(/^(storage\/app\/public|app\/public|storage|public)\//i, '');
 
-  // Avoid doubling the base, e.g. base ".../storage" + path "storage/blogs/a.jpg"
-  const basePath = imgurl.replace(/^https?:\/\/[^/]+/i, '').replace(/^\/+/, '');
-  const rel =
-    basePath && clean.startsWith(`${basePath}/`) ? clean.slice(basePath.length + 1) : clean;
-  return `${imgurl}/${rel}`;
+  const base = imgurl.replace(/\/+$/, '');
+  if (!base) return `/${clean}`;
+
+  return `${base}/${clean}`;
 };
 
 // Falls back only if the real image fails, and logs the failing URL in dev
@@ -326,8 +326,30 @@ const absolute = (url) => {
   return `${DOMAIN}${url.startsWith('/') ? url : `/${url}`}`;
 };
 
+// ---------- Content helpers ----------
+
+// True when the content contains HTML tags (rich-text editor output)
+const isHtml = (text = '') => /<\/?[a-z][\s\S]*>/i.test(text);
+
 const stripMarkdown = (text = '') =>
   text.replace(/\*\*/g, '').replace(/^\s*-\s+/gm, '').replace(/\s+/g, ' ').trim();
+
+// For SEO description and schema: remove tags and decode common entities
+const stripHtml = (html = '') =>
+  html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const toPlainText = (content = '') => (isHtml(content) ? stripHtml(content) : stripMarkdown(content));
+
+// ---------- Legacy plain-text renderer (old posts without HTML) ----------
 
 const renderInline = (text) =>
   text.split('**').map((part, i) =>
@@ -385,6 +407,102 @@ const formatContent = (content = '') => {
   return out;
 };
 
+// ---------- HTML renderer (html-react-parser) ----------
+// Maps each HTML tag to the page's Tailwind styling, so no typography plugin is needed.
+
+const parserOptions = {
+  replace: (node) => {
+    if (!(node instanceof Element)) return;
+
+    const { name, attribs = {}, children } = node;
+    const extra = attribs.class || ''; // keeps editor classes such as ql-align-center
+    const inner = () => domToReact(children, parserOptions);
+
+    switch (name) {
+      // Never render these from post content
+      case 'script':
+      case 'style':
+      case 'iframe':
+        return <></>;
+
+      case 'h1':
+      case 'h2':
+        return <h2 className={`text-2xl font-bold text-gray-900 mt-8 mb-3 ${extra}`}>{inner()}</h2>;
+
+      case 'h3':
+        return <h3 className={`text-xl font-semibold text-gray-900 mt-6 mb-2 ${extra}`}>{inner()}</h3>;
+
+      case 'h4':
+        return <h4 className={`text-lg font-semibold text-gray-900 mt-4 mb-2 ${extra}`}>{inner()}</h4>;
+
+      case 'p':
+        return <p className={`text-lg leading-relaxed mb-4 text-gray-700 ${extra}`}>{inner()}</p>;
+
+      case 'ul':
+        return <ul className={`list-disc pl-6 space-y-1 text-lg text-gray-700 mb-4 ${extra}`}>{inner()}</ul>;
+
+      case 'ol':
+        return <ol className={`list-decimal pl-6 space-y-1 text-lg text-gray-700 mb-4 ${extra}`}>{inner()}</ol>;
+
+      case 'li':
+        return <li className={extra}>{inner()}</li>;
+
+      case 'strong':
+      case 'b':
+        return <strong className="font-semibold text-gray-900">{inner()}</strong>;
+
+      case 'blockquote':
+        return (
+          <blockquote className="border-l-4 border-blue-600 bg-blue-50 pl-4 py-2 my-6 italic text-gray-700">
+            {inner()}
+          </blockquote>
+        );
+
+      case 'a': {
+        const href = attribs.href || '#';
+        const external = /^https?:\/\//i.test(href) && !href.startsWith(DOMAIN);
+        return (
+          <a
+            href={href}
+            className="text-blue-600 underline hover:text-blue-800"
+            {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {inner()}
+          </a>
+        );
+      }
+
+      case 'img':
+        return (
+          <img
+            src={resolveImage(attribs.src)}
+            alt={attribs.alt || ''}
+            loading="lazy"
+            onError={handleImgError}
+            className="my-6 w-full rounded-lg object-cover"
+          />
+        );
+
+      case 'table':
+        return (
+          <div className="my-6 overflow-x-auto">
+            <table className="w-full text-left text-gray-700">{inner()}</table>
+          </div>
+        );
+
+      case 'pre':
+        return (
+          <pre className="my-6 overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-gray-100">
+            {inner()}
+          </pre>
+        );
+
+      default:
+        return; // let the parser render everything else as normal
+    }
+  },
+};
+
 // `post` and `relatedPosts` are sent by BlogController@publicShow
 const BlogDetail = ({ post, relatedPosts = [] }) => {
   const heroRef = useRef(null);
@@ -411,7 +529,8 @@ const BlogDetail = ({ post, relatedPosts = [] }) => {
   const tags = post.tags || [];
   const image = resolveImage(pickImage(post));
   const canonicalUrl = `${DOMAIN}/blogs/${post.slug}`;
-  const metaDescription = ("" || stripMarkdown(post.content)).slice(0, 160);
+  const plainText = toPlainText(post.content);
+  const metaDescription = plainText.slice(0, 160);
 
   const schema = {
     '@context': 'https://schema.org',
@@ -434,7 +553,7 @@ const BlogDetail = ({ post, relatedPosts = [] }) => {
         },
         datePublished: post.date,
         dateModified: post.date,
-        articleBody: stripMarkdown(post.content),
+        articleBody: plainText,
         keywords: tags.join(', '),
       },
       {
@@ -484,8 +603,6 @@ const BlogDetail = ({ post, relatedPosts = [] }) => {
 
             <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-6">{post.title}</h1>
 
-            
-
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-blue-100 mb-8">
               <div className="flex items-center">
                 <User className="w-5 h-5 mr-2" />
@@ -533,8 +650,11 @@ const BlogDetail = ({ post, relatedPosts = [] }) => {
                 />
 
                 <div className="p-8">
-                  
-                  <div className="prose prose-lg max-w-none">{formatContent(post.content)}</div>
+                  <div className="max-w-none">
+                    {isHtml(post.content)
+                      ? parse(post.content, parserOptions)
+                      : formatContent(post.content)}
+                  </div>
                 </div>
               </article>
             </div>
