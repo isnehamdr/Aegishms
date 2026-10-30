@@ -54,7 +54,7 @@ export default function StatsHero() {
           {/* Stats */}
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
             <StatCard
-              end={500}
+              end={600}
               suffix="+"
               label="Customers Worldwide"
               active={isActive}
